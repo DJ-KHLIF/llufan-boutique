@@ -67,28 +67,42 @@
           Le sélecteur reste discret : c'est une pastille de texte, pas un bouton.
         {%- endcomment -%}
         {%- if settings.show_language_selector and localization.available_languages.size > 1 -%}
-          {%- assign iso_courant = localization.language.iso_code -%}
-          <div class="header__langue" role="group" aria-label="{{ 'general.language' | t }}">
-            {%- for language in localization.available_languages -%}
-              {%- assign est_courante = false -%}
-              {%- if language.iso_code == iso_courant -%}{%- assign est_courante = true -%}{%- endif -%}
-              {%- if est_courante -%}
-                <span class="header__langue-item is-actif" lang="{{ language.iso_code }}" aria-current="true">{{ language.endonym_name | capitalize }}</span>
-              {%- else -%}
-                {%- comment -%}
-                  L'identifiant du formulaire se calcule AVANT la balise : Shopify
-                  refuse les filtres (« | append: ») à l'intérieur d'un {%- form -%}.
-                {%- endcomment -%}
-                {%- assign id_formulaire = 'header-language-' | append: language.iso_code -%}
-                {%- form 'localization', id: id_formulaire, class: 'header__langue-form' -%}
-                  <input type="hidden" name="language_code" value="{{ language.iso_code }}">
-                  <button type="submit" class="header__langue-item" lang="{{ language.iso_code }}" aria-label="{{ 'general.language' | t }} : {{ language.endonym_name }}">{{ language.endonym_name | capitalize }}</button>
-                {%- endform -%}
-              {%- endif -%}
-              {%- unless forloop.last -%}<span class="header__langue-sep" aria-hidden="true">|</span>{%- endunless -%}
-            {%- endfor -%}
-          </div>
+  <details class="header__language-dropdown">
+    <summary aria-label="{{ 'general.language' | t | escape }}">
+      <span lang="{{ localization.language.iso_code }}">
+        {{ localization.language.endonym_name | capitalize }}
+      </span>
+      {% render 'icons', icon: 'chevron-down', size: 12 %}
+    </summary>
+
+    <div class="header__language-dropdown-menu">
+      {%- for language in localization.available_languages -%}
+        {%- if language.iso_code == localization.language.iso_code -%}
+          <span
+            class="header__language-option is-active"
+            lang="{{ language.iso_code }}"
+            aria-current="true">
+            {{ language.endonym_name | capitalize }}
+          </span>
+        {%- else -%}
+          {%- assign id_formulaire = 'header-language-' | append: language.iso_code -%}
+          {%- form 'localization', id: id_formulaire, class: 'header__language-form' -%}
+            <input
+              type="hidden"
+              name="language_code"
+              value="{{ language.iso_code }}">
+            <button
+              type="submit"
+              class="header__language-option"
+              lang="{{ language.iso_code }}">
+              {{ language.endonym_name | capitalize }}
+            </button>
+          {%- endform -%}
         {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </details>
+{%- endif -%}
         {%- if settings.show_country_selector and localization.available_countries.size > 1 -%}
           <details class="header__locale header__country">
             <summary>
