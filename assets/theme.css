@@ -1847,3 +1847,9 @@ a.club__discussion:hover { border-color: rgb(var(--text-color) / .45); transform
     text-align: center;
   }
 }
+@media screen and (max-width: 699px) {
+  .slideshow {
+    --hero-height: 60vh !important;
+  }
+}
+
