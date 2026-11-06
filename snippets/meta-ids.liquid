@@ -1,0 +1,26 @@
+{%- comment -%} Identifiants Meta (_fbc / _fbp) : format officiel du Parameter Builder, posés tôt pour la correspondance des événements. Ne touche pas à fbq ; ne remplace jamais un cookie valide déjà posé par le Pixel. {%- endcomment -%}
+<script>
+(function(){
+  try{
+    var host = location.hostname, p = host.split('.');
+    var domain = p.length > 2 ? '.' + p.slice(-2).join('.') : (p.length === 2 ? '.' + host : '');
+    var maxAge = 60 * 60 * 24 * 90;
+    function get(n){ var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? m[1] : ''; }
+    function set(n, v){
+      document.cookie = n + '=' + v + '; path=/; max-age=' + maxAge + '; SameSite=Lax' + (domain ? '; domain=' + domain : '') + (location.protocol === 'https:' ? '; Secure' : '');
+    }
+    var done = [];
+    var m = location.search.match(/[?&]fbclid=([A-Za-z0-9_-]{8,200})/);
+    if(m){
+      var cur = get('_fbc');
+      // fbc : fb.1.{horodatage}.{fbclid} — la casse du fbclid est conservée ; même clic = on garde le cookie existant.
+      if(!cur || cur.split('.')[3] !== m[1]){ set('_fbc', 'fb.1.' + Date.now() + '.' + m[1]); done.push('fbc'); }
+    }
+    if(!get('_fbp')){
+      var r = Math.floor(Math.random() * 2147483647) + 1; // 10 chiffres max, comme le Pixel
+      set('_fbp', 'fb.1.' + Date.now() + '.' + r); done.push('fbp');
+    }
+    if(done.length && window.console) console.log(done.join('/') + ' set');
+  }catch(e){}
+})();
+</script>
